@@ -1278,6 +1278,9 @@ namespace SimpleJson
         internal virtual IDictionary<string, ReflectionUtils.GetDelegate> GetterValueFactory(Type type)
         {
             IDictionary<string, ReflectionUtils.GetDelegate> result = new Dictionary<string, ReflectionUtils.GetDelegate>();
+	    // This prevents an group of exceptions thrown when a *thrown* exception is caught and serialized into JSON.
+            // Throwing adds a properties which cannot be got via the reflective code used and, even if these are bypassed,
+            // adds properties which when traversed cause an infinite loop - resulting in a stack overflow.
             if (type.FullName== "System.Reflection.RuntimeMethodInfo" && type.IsSealed && type.IsNotPublic)
             {
                 return result;
